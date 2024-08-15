@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.*;
 public class ReqResInTest {
     private final static String URL_REQ_RES = "https://reqres.in/";
 
-
     @Test
     public void testRequestListUsers() {
         List<UserData> user = (List<UserData>) given()
@@ -94,6 +93,17 @@ public class ReqResInTest {
                 .extract().body().asString();
 
         assertThat(singleResource).contains("fuchsia rose");
+    }
+
+    @Test
+    public void testSingleResourceNotFound() {
+        String singleResource = given()
+                .when()
+                .contentType(ContentType.JSON)
+                .get(URL_REQ_RES + "api/unknow/23")
+                .then().log().all()
+                .statusCode(404)
+                .extract().body().toString();
     }
 
 
