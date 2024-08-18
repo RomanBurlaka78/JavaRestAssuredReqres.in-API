@@ -59,8 +59,8 @@ public class ReqResInTest {
                 .statusCode(200)
                 .extract().response();
 
-        Assert.assertEquals(listSingleUser.asString().contains("first_name"), "first_name");
-        Assert.assertEquals(listSingleUser.asString().contains("Janet"), "Janet");
+        Assert.assertEquals(listSingleUser.asString().contains("first_name"), true);
+        Assert.assertEquals(listSingleUser.asString().contains("Janet"), true);
     }
 
     @Test
