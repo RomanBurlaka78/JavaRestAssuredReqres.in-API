@@ -1,4 +1,4 @@
-package api.pojo;
+package api.pojo.post;
 
 public class PostRegisterUser {
     private  String email;
