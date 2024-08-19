@@ -1,4 +1,4 @@
-package api.pojo;
+package api.pojo.put;
 
 public class PutUser {
     private  String name;

@@ -1,8 +1,8 @@
-package api.pojo;
+package api.pojo.put;
 
+import api.pojo.put.PutUser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResponsePut extends PutUser {
     private String updateAt;

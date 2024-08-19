@@ -1,20 +1,19 @@
 package api;
 
-import api.pojo.*;
+import api.pojo.get.UserData;
+import api.pojo.get.UserDataList;
 import io.restassured.http.ContentType;
-
 import io.restassured.response.Response;
 import jdk.jfr.Description;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-
-public class ReqResInTest {
+public class GetReqresInTest {
     private final static String URL_REQ_RES = "https://reqres.in/";
 
     @Test
@@ -127,127 +126,4 @@ public class ReqResInTest {
         assertThat(singleResource.statusCode() == 404);
         Assert.assertEquals(singleResource.statusCode(), 404);
     }
-
-    @Test
-    @Description("test attempt to post a data")
-    public void testCreatePost() {
-        String postUserData = "{\n" +
-                "    \"name\": \"morpheus\",\n" +
-                "    \"job\": \"leader\"\n" +
-                "}";
-
-        Response createPost = given()
-                .log().all()
-                .when()
-                .contentType(ContentType.JSON)
-                .body(postUserData)
-                .post(URL_REQ_RES + "api/users")
-                .then().log().all()
-                .statusCode(201)
-                .extract().response();
-
-        assertThat(createPost.statusCode() == 201);
-    }
-
-    @Test
-    @Description("test attempt to post with Pojo class")
-    public void testCreatePostPojo() {
-        PostRegisterUser createPostUser = new PostRegisterUser("eve.holt@reqres.in", "pistol");
-
-        ResponsePost response = given()
-                .log().all()
-                .when()
-                .contentType(ContentType.JSON)
-                .body(createPostUser)
-                .post("https://reqres.in/api/register")
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(ResponsePost.class);
-
-        assertThat(response.getId() == 4);
-        assertThat(response.getToken() == "QpwL5tke4Pnpja7X4");
-        Assert.assertEquals(response.getId(), 4);
-        Assert.assertEquals(response.getToken(), "QpwL5tke4Pnpja7X4");
-    }
-
-    @Test
-    @Description("test attempt to post a dataPut request with body : String ")
-    public void testPutUpdate() {
-        String users = "{\n" +
-                "    \"name\": \"morpheus\",\n" +
-                "    \"job\": \"zion resident\"\n" +
-                "}";
-
-        ResponsePut item = given()
-                .baseUri(URL_REQ_RES)
-                .log().all()
-                .when()
-                .contentType(ContentType.JSON)
-                .body(users)
-                .put("api/users/2")
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(ResponsePut.class);
-
-        Assert.assertEquals(item.getName(), "morpheus");
-    }
-
-    @Test
-    @Description("test attempt to post a data with body: PutUser.class")
-    public void testPutUpdateRequest() {
-
-        PutUser putUser = new PutUser("morpheus", "zion resident");
-
-        ResponsePut item = given()
-                .baseUri(URL_REQ_RES)
-                .log().all()
-                .when()
-                .contentType(ContentType.JSON)
-                .body(putUser)
-                .put("api/users/2")
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(ResponsePut.class);
-
-        Assert.assertEquals(item.getName(), "morpheus");
-        Assert.assertEquals(item.getJob(), "zion resident");
-    }
-
-    @Test
-    @Description("test attempt to patch  a request")
-    public void testPatch() {
-        PutUser patchUser = new PutUser("morpheus", "zion resident");
-
-        ResponsePut patch = given()
-                .baseUri(URL_REQ_RES)
-                .log().all()
-                .when()
-                .contentType(ContentType.JSON)
-                .body(patchUser)
-                .patch("api/users/2")
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(ResponsePut.class);
-
-        Assert.assertEquals(patch.getJob(), "zion resident");
-    }
-
-    @Test
-    @Description("test attempt to delete user")
-    public void testDelete() {
-        Response response = given()
-                .baseUri(URL_REQ_RES)
-                .log().all()
-                .when()
-                .delete("api/users/2")
-                .then().log().all()
-                .statusCode(204)
-                .extract().response();
-
-        assertThat(response.statusCode()).isEqualTo(204);
-        Assert.assertEquals(response.statusCode(), 204);
-    }
-
 }
-
-

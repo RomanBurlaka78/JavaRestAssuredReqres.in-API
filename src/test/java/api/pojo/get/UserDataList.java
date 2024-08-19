@@ -1,4 +1,4 @@
-package api.pojo;
+package api.pojo.get;
 
 public class UserDataList {
     private Integer id;
