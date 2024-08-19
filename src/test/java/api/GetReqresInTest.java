@@ -2,6 +2,7 @@ package api;
 
 import api.pojo.get.UserData;
 import api.pojo.get.UserDataList;
+import api.pojo.specification.Specifications;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import jdk.jfr.Description;
@@ -19,10 +20,11 @@ public class GetReqresInTest {
     @Test
     @Description("test attempt to receive list of users")
     public void testGetUsers() {
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES), Specifications.responseSpec200());
+
         List<UserData> user = (List<UserData>) given()
                 .when()
-                .contentType(ContentType.JSON)
-                .get("https://reqres.in/api/users?page=2")
+                .get("api/users?page=2")
                 .then().log().all()
                 .statusCode(200)
                 .extract().body().jsonPath().getList("data", UserData.class);
@@ -33,8 +35,7 @@ public class GetReqresInTest {
 
         String total = given()
                 .when()
-                .contentType(ContentType.JSON)
-                .get("https://reqres.in/api/users?page=2")
+                .get("api/users?page=2")
                 .then().log().all()
                 .statusCode(200)
                 .extract().asString();
@@ -125,5 +126,30 @@ public class GetReqresInTest {
 
         assertThat(singleResource.statusCode() == 404);
         Assert.assertEquals(singleResource.statusCode(), 404);
+    }
+
+    @Test
+    @Description("test attempt get delayed response")
+    public void testDelayedResponse() {
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES), Specifications.responseSpec200());
+        UserData delayedResponse = given()
+                .when()
+                .log().all()
+                .get("api/users?delay=3")
+                .then().log().all()
+                .extract().as(UserData.class);
+
+
+        List<UserData> delayedResponseList = given()
+                .when()
+                .log().all()
+                .get("api/users?delay=3")
+                .then().log().all()
+                .statusCode(200)
+                .extract().body().jsonPath().getList("data", UserData.class);
+
+        assertThat(delayedResponseList).extracting("first_name").contains("Charles");
+
+
     }
 }
