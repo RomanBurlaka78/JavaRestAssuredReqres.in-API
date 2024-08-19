@@ -2,6 +2,7 @@ package api;
 
 import api.pojo.post.PostRegisterUser;
 import api.pojo.post.ResponsePost;
+import api.pojo.specification.Specifications;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import jdk.jfr.Description;
@@ -38,13 +39,13 @@ public class PostReqresInTest {
     @Description("test attempt to post with Pojo class")
     public void testCreatePostPojo() {
         PostRegisterUser createPostUser = new PostRegisterUser("eve.holt@reqres.in", "pistol");
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),Specifications.responseSpec200());
 
         ResponsePost response = given()
                 .log().all()
                 .when()
-                .contentType(ContentType.JSON)
                 .body(createPostUser)
-                .post("https://reqres.in/api/register")
+                .post("api/register")
                 .then().log().all()
                 .statusCode(200)
                 .extract().as(ResponsePost.class);
