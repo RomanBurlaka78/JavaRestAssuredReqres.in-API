@@ -2,6 +2,7 @@ package api;
 
 import api.pojo.post.PostRegisterUser;
 import api.pojo.post.ResponsePost;
+import api.pojo.post.ResponsePostError;
 import api.pojo.specification.Specifications;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PostReqresInTest {
     private final static String URL_REQ_RES = "https://reqres.in/";
+
     @Test
     @Description("test attempt to post a data")
     public void testCreatePost() {
@@ -39,7 +41,8 @@ public class PostReqresInTest {
     @Description("test attempt to post with Pojo class")
     public void testCreatePostPojo() {
         PostRegisterUser createPostUser = new PostRegisterUser("eve.holt@reqres.in", "pistol");
-        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),Specifications.responseSpec200());
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
+                Specifications.responseSpec200());
 
         ResponsePost response = given()
                 .log().all()
@@ -55,4 +58,25 @@ public class PostReqresInTest {
         Assert.assertEquals(response.getId(), 4);
         Assert.assertEquals(response.getToken(), "QpwL5tke4Pnpja7X4");
     }
+
+    @Test
+    @Description("login unsuccessful")
+    public void loginUnSuccessFul() {
+        PostRegisterUser createPostUser = new PostRegisterUser("peter@klaven", "");
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
+                Specifications.responseSpec400());
+
+        ResponsePostError response = given()
+                .log().all()
+                .when()
+                .body(createPostUser)
+                .post("api/login")
+                .then().log().all()
+                .statusCode(400)
+                .extract().as(ResponsePostError.class);
+
+        assertThat(response.getError() == "Missing password");
+
+    }
+
 }
