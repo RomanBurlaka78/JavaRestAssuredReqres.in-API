@@ -48,7 +48,7 @@ public class GetReqresInTest {
     }
 
     @Test
-    @Description("test attempt to receive a data from single of user")
+    @Description("test attempt to receive a data from single user")
     public void testGetSingleUser() {
         Response listSingleUser = given()
                 .baseUri(URL_REQ_RES)
@@ -83,12 +83,12 @@ public class GetReqresInTest {
     }
 
     @Test
-    @Description("test attempt to receive list of users")
+    @Description("test attempt to receive list of <resource>")
     public void testListResource() {
         List<UserDataList> user = (List<UserDataList>) given()
                 .when()
                 .contentType(ContentType.JSON)
-                .get(URL_REQ_RES + "api/unknow")
+                .get(URL_REQ_RES + "api/unknown")
                 .then().log().all()
                 .statusCode(200)
                 .extract().body().jsonPath().getList("data", UserDataList.class);
@@ -100,11 +100,11 @@ public class GetReqresInTest {
     }
 
     @Test
-    @Description("test attempt to receive an answer about single user")
+    @Description("test attempt to receive an answer about single <resource>")
     public void testSingleResource() {
         String singleResource = given()
                 .when().contentType(ContentType.JSON)
-                .get(URL_REQ_RES + "api/unknow/2")
+                .get(URL_REQ_RES + "api/unknown/2")
                 .then().log().all()
                 .extract().body().asString();
 
@@ -112,14 +112,14 @@ public class GetReqresInTest {
     }
 
     @Test
-    @Description("test attempt to receive answer from unknown user")
+    @Description("test attempt to receive answer from single <resource> not found")
     public void testSingleResourceNotFound() {
         Response singleResource = given()
                 .when()
                 .log().all()
                 .baseUri(URL_REQ_RES)
                 .contentType(ContentType.JSON)
-                .get("api/unknow/23")
+                .get("api/unknown/23")
                 .then().log().all()
                 .statusCode(404)
                 .extract().response();
