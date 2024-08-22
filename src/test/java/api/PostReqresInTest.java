@@ -3,6 +3,7 @@ package api;
 import api.pojo.post.PostRegisterUser;
 import api.pojo.post.ResponsePost;
 import api.pojo.post.ResponsePostError;
+import api.pojo.post.ResponsePostLogin;
 import api.pojo.specification.Specifications;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -17,7 +18,7 @@ public class PostReqresInTest {
     private final static String URL_REQ_RES = "https://reqres.in/";
 
     @Test
-    @Description("test attempt to post a data")
+    @Description("test attempt to post a data - create")
     public void testCreatePost() {
         String postUserData = "{\n" +
                 "    \"name\": \"morpheus\",\n" +
@@ -38,7 +39,7 @@ public class PostReqresInTest {
     }
 
     @Test
-    @Description("test attempt to post with Pojo class")
+    @Description("test attempt to post with Pojo class - register")
     public void testCreatePostPojo() {
         PostRegisterUser createPostUser = new PostRegisterUser("eve.holt@reqres.in", "pistol");
         Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
@@ -60,8 +61,48 @@ public class PostReqresInTest {
     }
 
     @Test
-    @Description("login unsuccessful")
-    public void loginUnSuccessFul() {
+    @Description("test attempt to post with Pojo class - register unsuccessful")
+    public void testRegisterUnsuccessful() {
+        PostRegisterUser createPostUser = new PostRegisterUser("sydney@fife", "");
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
+                Specifications.responseSpec400());
+
+        ResponsePostError response = given()
+                .log().all()
+                .when()
+                .body(createPostUser)
+                .post("api/register")
+                .then().log().all()
+                .extract().as(ResponsePostError.class);
+
+        assertThat(response.getError() == "Missing password");
+
+    }
+
+    @Test
+    @Description("test attempt to post with Pojo class - login")
+    public void testLoginSuccessful() {
+        PostRegisterUser createPostUser = new PostRegisterUser("eve.holt@reqres.in", "cityslicka");
+        Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
+                Specifications.responseSpec200());
+
+        ResponsePostLogin response = given()
+                .log().all()
+                .when()
+                .body(createPostUser)
+                .post("api/login")
+                .then().log().all()
+                .extract().as(ResponsePostLogin.class);
+
+        assertThat(response.getToken() == "QpwL5tke4Pnpja7X4");
+
+    }
+
+
+
+    @Test
+    @Description("test attempt to post with Pojo class - login unsuccessful")
+    public void testLoginUnSuccessFul() {
         PostRegisterUser createPostUser = new PostRegisterUser("peter@klaven", "");
         Specifications.installSpec(Specifications.requestSpecification(URL_REQ_RES),
                 Specifications.responseSpec400());
